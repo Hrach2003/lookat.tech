@@ -10,8 +10,8 @@ import { AuthService } from './auth.service';
 @Module({
   imports: [
     ConfigModule,
+    PassportModule,
     forwardRef(() => UserModule),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

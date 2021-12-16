@@ -5,8 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RolesEnum } from 'src/core/user/entities/role.enum';
-import { User } from 'src/core/user/entities/user.entity';
+import { User, UserRoleEnum } from '@prisma/client';
 import { ROLE_META_KEY } from './../../../decorators/roles.decorator';
 
 @Injectable()
@@ -15,7 +14,7 @@ export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): Promise<boolean> | boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<RolesEnum[]>(
+    const requiredRoles = this.reflector.getAllAndOverride<UserRoleEnum[]>(
       ROLE_META_KEY,
       [context.getClass(), context.getHandler()],
     );

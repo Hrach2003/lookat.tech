@@ -1,15 +1,21 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import { LoginDto } from 'src/core/auth/dto/login.dto';
 import { TokenDto } from 'src/core/auth/dto/token.dto';
 import { JwtPayload } from 'src/core/auth/types/jwt.type';
-import { User } from 'src/core/user/entities/user.entity';
+import { Hash } from 'src/utils/hash.util';
 import { UserService } from '../user/user.service';
-import { compareHash } from '../../utils/hash.util';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
@@ -17,7 +23,7 @@ export class AuthService {
   async validateUser(loginDto: LoginDto): Promise<User> {
     const user = await this.userService.findByEmail(loginDto.email);
 
-    const isPasswordsMatch = await compareHash(
+    const isPasswordsMatch = await Hash.compare(
       loginDto.password,
       user?.password,
     );

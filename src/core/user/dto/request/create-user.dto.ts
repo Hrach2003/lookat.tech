@@ -6,7 +6,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { RolesEnum } from 'src/core/user/entities/role.enum';
+import { UserRoleEnum } from '@prisma/client';
 
 export class CreateUserDto {
   @IsString()
@@ -22,8 +22,8 @@ export class CreateUserDto {
   @MinLength(8)
   password: string;
 
-  @ApiProperty({ enum: RolesEnum })
-  @IsEnum(RolesEnum)
+  @ApiProperty({ enum: UserRoleEnum })
+  @IsEnum(UserRoleEnum)
   @IsOptional()
-  role: RolesEnum;
+  role: UserRoleEnum;
 }
