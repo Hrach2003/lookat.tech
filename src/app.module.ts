@@ -7,6 +7,7 @@ import { FileUploadModule } from './file-upload/file-upload.module';
 import { UserModule } from './modules/user/user.module';
 import { OpenApiService } from './open-api/open-api.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { PostModule } from './modules/post/post.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
     UserModule,
     FileUploadModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService, OpenApiService],

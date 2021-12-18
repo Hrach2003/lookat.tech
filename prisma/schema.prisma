@@ -8,9 +8,10 @@ datasource db {
 }
 
 model User {
-  id              Int          @id @default(autoincrement())
-  createdAt       DateTime     @default(now()) @db.Timestamp(6)
-  updatedAt       DateTime     @default(now()) @db.Timestamp(6)
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+
   deletedAt       DateTime?    @db.Timestamp(6)
   name            String       @db.VarChar
   email           String       @unique @db.VarChar
@@ -20,10 +21,43 @@ model User {
   friends         User[]       @relation("friends")
   friendsRelation User[]       @relation("friends")
 
+  posts    Post[]
+  comments Comment[]
+
   @@map("user")
 }
 
 enum UserRoleEnum {
   ADMIN
   USER
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+
+  title   String @db.VarChar
+  content String @db.VarChar
+
+  author   User @relation(fields: [authorId], references: [id])
+  authorId Int
+
+  @@map("post")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+
+  message String @db.VarChar(200)
+
+  replies          Comment[] @relation("replies")
+  commentsRelation Comment[] @relation("replies")
+
+  commenter   User @relation(fields: [commenterId], references: [id])
+  commenterId Int
+
+  @@map("comment")
 }
