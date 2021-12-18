@@ -26,9 +26,9 @@ export class UserRepository {
     });
   }
 
-  async findOne(userFindInput: Prisma.UserWhereInput) {
+  async findOne(userFindUniqueInput: Prisma.UserWhereUniqueInput) {
     return await this.prismaService.user.findFirst({
-      where: userFindInput,
+      where: userFindUniqueInput,
     });
   }
 
@@ -47,7 +47,7 @@ export class UserRepository {
   }
 
   async addFriends(userId: number, friendIds: number[]) {
-    const updatedUser = await this.prismaService.user.update({
+    return await this.prismaService.user.update({
       where: { id: userId },
       include: {
         friends: true,
@@ -58,7 +58,5 @@ export class UserRepository {
         },
       },
     });
-
-    return updatedUser;
   }
 }

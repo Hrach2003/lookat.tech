@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { LoginDto } from 'src/core/auth/dto/login.dto';
-import { TokenDto } from 'src/core/auth/dto/token.dto';
-import { JwtPayload } from 'src/core/auth/types/jwt.type';
+import { LoginDto } from 'src/modules/auth/dto/login.dto';
+import { TokenDto } from 'src/modules/auth/dto/token.dto';
+import { JwtPayload } from 'src/modules/auth/types/jwt.type';
 import { Hash } from 'src/utils/hash.util';
 import { UserService } from '../user/user.service';
 

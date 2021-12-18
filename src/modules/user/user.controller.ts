@@ -15,10 +15,10 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User, UserRoleEnum } from '@prisma/client';
-import { JwtAuthGuard } from 'src/core/auth/guards/jwt.guard';
-import { RoleGuard } from 'src/core/auth/guards/role.guard';
-import { ChangePasswordDto } from 'src/core/user/dto/request/change-password.dto';
-import { UserResponseDto } from 'src/core/user/dto/response/user.dto';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt.guard';
+import { RoleGuard } from 'src/modules/auth/guards/role.guard';
+import { ChangePasswordDto } from 'src/modules/user/dto/request/change-password.dto';
+import { UserResponseDto } from 'src/modules/user/dto/response/user.dto';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { FileUploadDto } from '../../file-upload/dto/file-upload.dto';
@@ -31,6 +31,7 @@ import { UserService } from './user.service';
 @ApiTags('user')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
+
   constructor(private readonly userService: UserService) {}
 
   @Post('create')

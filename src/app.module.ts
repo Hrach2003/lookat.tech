@@ -4,9 +4,9 @@ import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FileUploadModule } from './file-upload/file-upload.module';
-import { UserModule } from './core/user/user.module';
+import { UserModule } from './modules/user/user.module';
 import { OpenApiService } from './open-api/open-api.service';
-import { AuthModule } from './core/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [

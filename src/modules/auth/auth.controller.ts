@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { LoginDto } from 'src/core/auth/dto/login.dto';
-import { TokenDto } from 'src/core/auth/dto/token.dto';
-import { UserResponseDto } from 'src/core/user/dto/response/user.dto';
+import { LoginDto } from 'src/modules/auth/dto/login.dto';
+import { TokenDto } from 'src/modules/auth/dto/token.dto';
+import { UserResponseDto } from 'src/modules/user/dto/response/user.dto';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.guard';
