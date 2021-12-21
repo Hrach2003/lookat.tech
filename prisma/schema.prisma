@@ -10,7 +10,7 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
 
   deletedAt       DateTime?    @db.Timestamp(6)
   name            String       @db.VarChar
@@ -36,7 +36,7 @@ enum UserRoleEnum {
 model Post {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
 
   title   String @db.VarChar
   content String @db.VarChar
@@ -52,7 +52,7 @@ model Post {
 model Reply {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
 
   message String @db.VarChar(200)
 
@@ -68,7 +68,7 @@ model Reply {
 model Comment {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
 
   message String @db.VarChar(200)
 
