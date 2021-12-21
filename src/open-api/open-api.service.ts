@@ -7,7 +7,7 @@ export class OpenApiService {
     const config = new DocumentBuilder()
       .setTitle('Look at tech API')
       .setVersion('1.0')
-      .addTag('tech')
+      .addBearerAuth()
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('swagger-ui', app, document);

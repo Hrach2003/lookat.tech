@@ -15,17 +15,17 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User, UserRoleEnum } from '@prisma/client';
-import { JwtAuthGuard } from 'src/modules/auth/guards/jwt.guard';
-import { RoleGuard } from 'src/modules/auth/guards/role.guard';
-import { ChangePasswordDto } from 'src/modules/user/dto/request/change-password.dto';
-import { UserResponseDto } from 'src/modules/user/dto/response/user.dto';
-import { CurrentUser } from 'src/decorators/current-user.decorator';
-import { Roles } from 'src/decorators/roles.decorator';
+import { JwtAuthGuard } from 'modules/auth/guards/jwt.guard';
+import { RoleGuard } from 'modules/auth/guards/role.guard';
+import { ChangePasswordDto } from 'modules/user/dto/request/change-password.dto';
+import { CurrentUser } from 'decorators/current-user.decorator';
+import { Roles } from 'decorators/roles.decorator';
 import { FileUploadDto } from '../../file-upload/dto/file-upload.dto';
 import { AddFriendsDto } from './dto/request/add-friends.dto';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
 import { UserService } from './user.service';
+import { UserDefaultView } from 'modules/user/dto/response/user-default.dto';
 
 @Controller('user')
 @ApiTags('user')
@@ -36,48 +36,57 @@ export class UserController {
 
   @Post('create')
   @ApiOkResponse({
-    type: UserResponseDto,
+    type: UserDefaultView,
   })
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const newUser = await this.userService.create(createUserDto);
-    return new UserResponseDto(newUser);
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return await this.userService.create(createUserDto);
   }
 
   @Get()
   @Roles(UserRoleEnum.ADMIN)
   @UseGuards(JwtAuthGuard, RoleGuard)
-  async findAll() {
+  @ApiOkResponse({
+    type: [UserDefaultView],
+  })
+  async findAll(): Promise<User[]> {
     return await this.userService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  @ApiOkResponse({
+    type: UserDefaultView,
+  })
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.userService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    type: UserDefaultView,
+  })
   async update(
     @CurrentUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
-  ) {
+  ): Promise<User> {
     return await this.userService.update(user.id, updateUserDto);
   }
 
   @Post('update-password')
   @ApiBody({ type: ChangePasswordDto })
-  @ApiOkResponse({ type: UserResponseDto })
+  @ApiOkResponse({ type: UserDefaultView })
   async updatePassword(
     @CurrentUser() user: User,
     @Body() changePasswordDto: ChangePasswordDto,
-  ): Promise<UserResponseDto> {
-    await this.userService.updatePassword(user, changePasswordDto);
-    return new UserResponseDto(user);
+  ): Promise<User> {
+    return await this.userService.updatePassword(user, changePasswordDto);
   }
 
   @Delete(':id')
+  @ApiOkResponse({ type: Boolean })
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return await this.userService.remove(id);
+    await this.userService.remove(id);
+    return true;
   }
 
   @Post('upload-avatar')
@@ -88,26 +97,26 @@ export class UserController {
     description: 'User avatar',
     type: FileUploadDto,
   })
+  @ApiOkResponse({ type: UserDefaultView })
   async uploadAvatar(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
     this.logger.debug(`FileName ${file.originalname} ${file.size}`);
-    const userWithAvatar = await this.userService.uploadAvatar(user, file);
-
-    return new UserResponseDto(userWithAvatar);
+    return await this.userService.uploadAvatar(user, file);
   }
 
   @ApiBody({
     description: "New Friend's ids",
     type: AddFriendsDto,
   })
+  @ApiOkResponse({ type: UserDefaultView })
   @Post('add-friends')
   @UseGuards(JwtAuthGuard)
   async addFriends(
     @Body() addFriendsDto: AddFriendsDto,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<User> {
     return await this.userService.addFriends(user.id, addFriendsDto.friendIds);
   }
 }

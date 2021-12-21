@@ -6,7 +6,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import * as mime from 'mime-types';
-import { Generator } from 'src/utils/generator.util';
+import { Generator } from 'utils/generator.util';
 
 @Injectable()
 export class FileUploadService {

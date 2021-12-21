@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/database/database.service';
-import { PostRepository } from 'src/modules/post/repositories/post.repository';
+import { PrismaService } from 'database/database.service';
+import { PostRepository } from 'modules/post/repositories/post.repository';
 import { PostController } from './post.controller';
 import { PostService } from './post.service';
 

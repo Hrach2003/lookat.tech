@@ -1,15 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { Post, Prisma, User } from '@prisma/client';
-import { PrismaService } from 'src/database/database.service';
-import { CreatePostDto } from 'src/modules/post/dto/create-post.dto';
-import { UpdatePostDto } from 'src/modules/post/dto/update-post.dto';
+import { paginationQuery } from 'common/pagination.query';
+import { PrismaService } from 'database/database.service';
+import { CreatePostDto } from 'modules/post/dto/request/create-post.dto';
+import { PostPaginationRequest } from 'modules/post/dto/response/pagination-post.dto';
+import { UpdatePostDto } from 'modules/post/dto/request/update-post.dto';
+import { PostDefaultView } from 'modules/post/dto/response/post-default.dto';
 
 @Injectable()
 export class PostRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createPost(user: User, createPostDto: CreatePostDto): Promise<Post> {
+  async createPost(
+    user: User,
+    createPostDto: CreatePostDto,
+    postSelect = new PostDefaultView(),
+  ): Promise<Post> {
     return await this.prismaService.post.create({
+      select: postSelect,
       data: {
         ...createPostDto,
         author: {
@@ -21,25 +29,41 @@ export class PostRepository {
     });
   }
 
-  async findAll(findAllPostInput: Prisma.PostWhereInput) {
+  async findAll(
+    postInput: Prisma.PostWhereInput,
+    postSelect = new PostDefaultView(),
+  ) {
     return await this.prismaService.post.findMany({
-      where: findAllPostInput,
+      select: postSelect,
+      where: postInput,
     });
   }
 
-  async findOne(postUniqueInput: Prisma.PostWhereUniqueInput) {
+  async findOne(
+    postUniqueInput: Prisma.PostWhereUniqueInput,
+    postSelect = new PostDefaultView(),
+  ) {
     return await this.prismaService.post.findFirst({
+      select: postSelect,
       where: postUniqueInput,
-      include: {
-        author: true,
-      },
     });
+  }
+
+  async filter(postPaginationRequest: PostPaginationRequest) {
+    return await this.prismaService.post.findMany({
+      ...paginationQuery(postPaginationRequest),
+    });
+  }
+
+  async getCount() {
+    return await this.prismaService.post.count();
   }
 
   async update(
     user: User,
     postUniqueInput: Prisma.PostWhereUniqueInput,
     updatePostDto: UpdatePostDto,
+    postSelect = new PostDefaultView(),
   ) {
     return await this.prismaService.user
       .update({
@@ -53,12 +77,16 @@ export class PostRepository {
           },
         },
       })
-      .posts();
+      .posts({ select: postSelect });
   }
 
-  async delete(postUniqueInput: Prisma.PostWhereUniqueInput): Promise<Post> {
+  async delete(
+    postUniqueInput: Prisma.PostWhereUniqueInput,
+    postSelect = new PostDefaultView(),
+  ): Promise<Post> {
     return await this.prismaService.post.delete({
       where: postUniqueInput,
+      select: postSelect,
     });
   }
 }

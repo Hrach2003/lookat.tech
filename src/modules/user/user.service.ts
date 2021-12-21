@@ -7,8 +7,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { ChangePasswordDto } from 'src/modules/user/dto/request/change-password.dto';
-import { Hash } from 'src/utils/hash.util';
+import { ChangePasswordDto } from 'modules/user/dto/request/change-password.dto';
+import { Hash } from 'utils/hash.util';
 import { FileUploadService } from '../../file-upload/file-upload.service';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
