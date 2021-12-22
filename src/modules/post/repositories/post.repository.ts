@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { Post, Prisma, User } from '@prisma/client';
-import { paginationQuery } from 'common/pagination.query';
-import { PrismaService } from 'database/database.service';
-import { CreatePostDto } from 'modules/post/dto/request/create-post.dto';
-import { PostPaginationRequest } from 'modules/post/dto/response/pagination-post.dto';
-import { UpdatePostDto } from 'modules/post/dto/request/update-post.dto';
-import { PostDefaultView } from 'modules/post/dto/response/post-default.dto';
+import { Prisma, User } from '@prisma/client';
+import { paginationQuery } from '../../../common/pagination.query';
+import { PrismaService } from '../../../database/database.service';
+import { CreatePostDto } from '../dto/request/create-post.dto';
+import { UpdatePostDto } from '../dto/request/update-post.dto';
+import { PostPaginationRequest } from '../dto/response/pagination-post.dto';
+import { PostView } from '../dto/response/post-default.dto';
 
 @Injectable()
 export class PostRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createPost(
+  async createPost<T>(
     user: User,
     createPostDto: CreatePostDto,
-    postSelect = new PostDefaultView(),
-  ): Promise<Post> {
+    postSelect = PostView.default<T>(),
+  ) {
     return await this.prismaService.post.create({
       select: postSelect,
       data: {
@@ -29,9 +29,9 @@ export class PostRepository {
     });
   }
 
-  async findAll(
+  async findAll<T>(
     postInput: Prisma.PostWhereInput,
-    postSelect = new PostDefaultView(),
+    postSelect = PostView.default<T>(),
   ) {
     return await this.prismaService.post.findMany({
       select: postSelect,
@@ -39,9 +39,9 @@ export class PostRepository {
     });
   }
 
-  async findOne(
+  async findOne<T>(
     postUniqueInput: Prisma.PostWhereUniqueInput,
-    postSelect = new PostDefaultView(),
+    postSelect = PostView.default<T>(),
   ) {
     return await this.prismaService.post.findFirst({
       select: postSelect,
@@ -59,11 +59,11 @@ export class PostRepository {
     return await this.prismaService.post.count();
   }
 
-  async update(
+  async update<T>(
     user: User,
     postUniqueInput: Prisma.PostWhereUniqueInput,
     updatePostDto: UpdatePostDto,
-    postSelect = new PostDefaultView(),
+    postSelect = PostView.default<T>(),
   ) {
     return await this.prismaService.user
       .update({
@@ -80,10 +80,10 @@ export class PostRepository {
       .posts({ select: postSelect });
   }
 
-  async delete(
+  async delete<T>(
     postUniqueInput: Prisma.PostWhereUniqueInput,
-    postSelect = new PostDefaultView(),
-  ): Promise<Post> {
+    postSelect = PostView.default<T>(),
+  ) {
     return await this.prismaService.post.delete({
       where: postUniqueInput,
       select: postSelect,

@@ -1,34 +1,30 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
-import { CommentDefaultView } from 'modules/comment/dto/response/comment-default.dto';
-import { UserDefaultView } from 'modules/user/dto/response/user-default.dto';
 
-export class PostDefaultView implements Required<Prisma.PostSelect> {
-  @ApiProperty({ type: Number })
-  id = true;
+type BaseView = typeof PostView.fields;
 
-  @ApiProperty({ type: Date })
-  createdAt = true;
+export class PostView {
+  static readonly fields = {
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    title: true,
+    content: true,
+    comments: true,
+  };
 
-  @ApiProperty({ type: Date })
-  updatedAt = true;
+  static default<T extends Prisma.PostSelect>(select?: T): T & BaseView {
+    return {
+      ...this.fields,
+      ...select,
+    };
+  }
 
-  @ApiProperty({ type: String })
-  title = true;
-
-  @ApiProperty({ type: String })
-  content = true;
-
-  @ApiProperty({ type: CommentDefaultView })
-  comments = { select: new CommentDefaultView() };
-
-  @ApiProperty({ type: UserDefaultView })
-  author = { select: new UserDefaultView({ posts: false }) };
-
-  authorId = false;
-  _count = false;
-
-  constructor(select?: Prisma.PostSelect) {
-    Object.assign(select);
+  static full<T extends Prisma.PostSelect>(select?: T): T & BaseView {
+    return {
+      ...this.fields,
+      comments: true,
+      author: true,
+      ...select,
+    };
   }
 }

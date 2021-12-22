@@ -7,14 +7,13 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { LoginDto } from 'modules/auth/dto/request/login.dto';
-import { TokenDto } from 'modules/auth/dto/response/token.dto';
-import { CurrentUser } from 'decorators/current-user.decorator';
+import { CurrentUser } from '../../decorators/current-user.decorator';
 import { AuthService } from './auth.service';
+import { LoginDto } from './dto/request/login.dto';
+import { TokenDto } from './dto/response/token.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
-import { UserDefaultView } from 'modules/user/dto/response/user-default.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -34,8 +33,6 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @ApiOkResponse({ type: UserDefaultView })
   getCurrentUser(@CurrentUser() me: User) {
     return me;
   }

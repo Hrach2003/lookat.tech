@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'database/database.service';
-import { CommentController } from 'modules/comment/comment.controller';
-import { CommentRepository } from 'modules/comment/repository/comment.repository';
+import { PrismaService } from '../../database/database.service';
+import { CommentController } from './comment.controller';
 import { CommentGateway } from './comment.gateway';
 import { CommentService } from './comment.service';
+import { CommentRepository } from './repository/comment.repository';
 
 @Module({
   controllers: [CommentController],

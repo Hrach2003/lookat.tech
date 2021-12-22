@@ -1,24 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from 'database/database.service';
-import { UserDefaultView } from 'modules/user/dto/response/user-default.dto';
+import { PrismaService } from '../../../database/database.service';
 import { CreateUserDto } from '../dto/request/create-user.dto';
+import { UserView } from './../dto/response/user-default.dto';
 
 @Injectable()
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async delete(id: number, userSelect = new UserDefaultView()) {
+  async delete<T>(id: number, userSelect = UserView.default<T>()) {
     return await this.prismaService.user.delete({
       where: { id },
       select: userSelect,
     });
   }
 
-  async update(
+  async update<T>(
     id: number,
     updateUserDto: Prisma.UserUpdateInput,
-    userSelect = new UserDefaultView(),
+    userSelect = UserView.default<T>(),
   ) {
     return await this.prismaService.user.update({
       where: { id },
@@ -27,9 +27,9 @@ export class UserRepository {
     });
   }
 
-  async findMany(
+  async findMany<T>(
     userFindInput: Prisma.UserWhereInput,
-    userSelect = new UserDefaultView(),
+    userSelect = UserView.default<T>(),
   ) {
     return await this.prismaService.user.findMany({
       where: userFindInput,
@@ -37,9 +37,9 @@ export class UserRepository {
     });
   }
 
-  async findOne(
+  async findOne<T>(
     userFindUniqueInput: Prisma.UserWhereUniqueInput,
-    userSelect = new UserDefaultView(),
+    userSelect = UserView.default<T>(),
   ) {
     return await this.prismaService.user.findFirst({
       where: userFindUniqueInput,
@@ -47,16 +47,16 @@ export class UserRepository {
     });
   }
 
-  async findByEmail(email: string, userSelect = new UserDefaultView()) {
+  async findByEmail<T>(email: string, userSelect = UserView.default<T>()) {
     return await this.prismaService.user.findFirst({
       where: { email },
       select: userSelect,
     });
   }
 
-  async createUser(
+  async createUser<T>(
     createUserDto: CreateUserDto,
-    userSelect = new UserDefaultView(),
+    userSelect = UserView.default<T>(),
   ) {
     const user = await this.prismaService.user.create({
       data: createUserDto,
@@ -66,10 +66,10 @@ export class UserRepository {
     return user;
   }
 
-  async addFriends(
+  async addFriends<T>(
     userId: number,
     friendIds: number[],
-    userSelect = new UserDefaultView(),
+    userSelect = UserView.default<T>(),
   ) {
     return await this.prismaService.user.update({
       where: { id: userId },

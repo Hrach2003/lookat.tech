@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Post, User } from '@prisma/client';
-import { PostPaginationRequest } from 'modules/post/dto/response/pagination-post.dto';
+import { User } from '@prisma/client';
 import { CreatePostDto } from './dto/request/create-post.dto';
 import { UpdatePostDto } from './dto/request/update-post.dto';
+import { PostPaginationRequest } from './dto/response/pagination-post.dto';
 import { PostRepository } from './repositories/post.repository';
 
 @Injectable()
 export class PostService {
   constructor(private readonly postRepository: PostRepository) {}
 
-  async create(user: User, createPostDto: CreatePostDto): Promise<Post> {
+  async create(user: User, createPostDto: CreatePostDto) {
     return await this.postRepository.createPost(user, createPostDto);
   }
 
@@ -17,13 +17,13 @@ export class PostService {
     return await this.postRepository.findAll({});
   }
 
-  async findByUser(user: User): Promise<Post[]> {
+  async findByUser(user: User) {
     return await this.postRepository.findAll({
       authorId: user.id,
     });
   }
 
-  async findById(id: number): Promise<Post> {
+  async findById(id: number) {
     return await this.postRepository.findOne({ id });
   }
 
@@ -34,11 +34,7 @@ export class PostService {
     return { count, posts };
   }
 
-  async update(
-    user: User,
-    id: number,
-    updatePostDto: UpdatePostDto,
-  ): Promise<Post[]> {
+  async update(user: User, id: number, updatePostDto: UpdatePostDto) {
     return await this.postRepository.update(user, { id }, updatePostDto);
   }
 

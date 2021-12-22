@@ -1,4 +1,4 @@
-import { PaginationRequestDto } from 'common/pagination.dto';
+import { PaginationRequestDto } from './pagination.dto';
 
 export function paginationQuery<T extends string>(
   paginationRequest: PaginationRequestDto<T>,

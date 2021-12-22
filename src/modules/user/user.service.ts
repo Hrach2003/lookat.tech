@@ -1,4 +1,3 @@
-import { AuthService } from '../auth/auth.service';
 import {
   ConflictException,
   forwardRef,
@@ -7,11 +6,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { ChangePasswordDto } from 'modules/user/dto/request/change-password.dto';
-import { Hash } from 'utils/hash.util';
 import { FileUploadService } from '../../file-upload/file-upload.service';
+import { Hash } from '../../utils/hash.util';
+import { AuthService } from '../auth/auth.service';
+import { ChangePasswordDto } from './dto/request/change-password.dto';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
+import { UserView } from './dto/response/user-default.dto';
 import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
@@ -23,7 +24,7 @@ export class UserService {
     private readonly fileUploadService: FileUploadService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto) {
     const existsEmail = await this.userRepository.findByEmail(
       createUserDto.email,
     );
@@ -48,8 +49,8 @@ export class UserService {
     return await this.userRepository.findOne({ id });
   }
 
-  async findByEmail(email: string): Promise<User> {
-    return await this.userRepository.findByEmail(email);
+  async findByEmail<T>(email: string, userSelect = UserView.default<T>()) {
+    return await this.userRepository.findByEmail(email, userSelect);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -72,7 +73,7 @@ export class UserService {
     if (!deleteResponse) throw new NotFoundException('User not found');
   }
 
-  async uploadAvatar(user: User, file: Express.Multer.File): Promise<User> {
+  async uploadAvatar(user: User, file: Express.Multer.File) {
     const imageUrl = await this.fileUploadService.uploadFile(file);
     return await this.userRepository.update(user.id, { avatar: imageUrl });
   }

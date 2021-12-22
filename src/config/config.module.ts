@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
+import { loadConfig } from './config.loader';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
+      load: [loadConfig],
       validationSchema: Joi.object({
         PORT: Joi.number().required(),
+        IS_DEV: Joi.bool().default(true),
         UPLOAD_KEY: Joi.string().required(),
         JWT_EXPIRATION: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),

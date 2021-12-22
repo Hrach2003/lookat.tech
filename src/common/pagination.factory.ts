@@ -1,7 +1,4 @@
-import {
-  PaginationResponseDto,
-  PaginationRequestDto,
-} from 'common/pagination.dto';
+import { PaginationRequestDto, PaginationResponseDto } from './pagination.dto';
 
 export class PaginationFactory {
   static create<SortBy extends string, T>(

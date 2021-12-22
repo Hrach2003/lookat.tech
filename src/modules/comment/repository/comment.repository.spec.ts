@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { Comment, Post, Reply, User } from '@prisma/client';
+import { AppConfigModule } from '../../../config/config.module';
 import { PrismaService } from '../../../database/database.service';
-import { CreateCommentDto } from './../dto/request/create-comment.dto';
 import { CreateReplyDto } from '../dto/create-reply.dto';
+import { CreateCommentDto } from './../dto/request/create-comment.dto';
+import { CommentView } from './../dto/response/comment-default.dto';
 import { CommentRepository } from './comment.repository';
-import { AppConfigModule } from 'config/config.module';
 
 describe('CommentRepository', () => {
   let commentRepository: CommentRepository;
@@ -179,9 +180,12 @@ describe('CommentRepository', () => {
 
       const lastComment = comments.at(-1);
 
-      const result = await commentRepository.findUnique({
-        id: lastComment.id,
-      });
+      const result = await commentRepository.findUnique(
+        {
+          id: lastComment.id,
+        },
+        CommentView.default({ commenter: true }),
+      );
 
       it('should return right comment', () => {
         expect(result.message).toEqual(createCommentDto.message);

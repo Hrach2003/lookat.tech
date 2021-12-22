@@ -5,8 +5,8 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 import { User } from '@prisma/client';
-import { CurrentUser } from 'decorators/current-user.decorator';
-import { JwtAuthGuard } from 'modules/auth/guards/jwt.guard';
+import { CurrentUser } from '../../decorators/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/request/create-comment.dto';
 import { UpdateCommentDto } from './dto/request/update-comment.dto';

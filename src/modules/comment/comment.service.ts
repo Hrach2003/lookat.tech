@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Comment, Reply, User } from '@prisma/client';
-import { CreateReplyDto } from 'modules/comment/dto/create-reply.dto';
+import { Reply, User } from '@prisma/client';
+import { CreateReplyDto } from './dto/create-reply.dto';
 import { CreateCommentDto } from './dto/request/create-comment.dto';
 import { UpdateCommentDto } from './dto/request/update-comment.dto';
 import { CommentRepository } from './repository/comment.repository';
@@ -19,10 +19,7 @@ export class CommentService {
     );
   }
 
-  async commentToPost(
-    user: User,
-    createCommentDto: CreateCommentDto,
-  ): Promise<Comment[]> {
+  async commentToPost(user: User, createCommentDto: CreateCommentDto) {
     return await this.commentRepository.createPostComment(
       user,
       createCommentDto,

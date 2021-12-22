@@ -23,8 +23,8 @@ model User {
 
   posts    Post[]
   comments Comment[]
-  replies Reply[]
-  
+  replies  Reply[]
+
   @@map("user")
 }
 
