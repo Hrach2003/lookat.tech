@@ -1,10 +1,9 @@
 import { HttpModule } from '@nestjs/axios';
-import { Logger, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { Module } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
 
 @Module({
-  imports: [HttpModule, ConfigModule, Logger],
+  imports: [HttpModule],
   exports: [FileUploadService],
   providers: [FileUploadService],
 })

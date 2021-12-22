@@ -1,10 +1,10 @@
-import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { Comment, Post, Reply, User } from '@prisma/client';
 import { PrismaService } from '../../../database/database.service';
 import { CreateCommentDto } from './../dto/request/create-comment.dto';
 import { CreateReplyDto } from '../dto/create-reply.dto';
 import { CommentRepository } from './comment.repository';
+import { AppConfigModule } from 'config/config.module';
 
 describe('CommentRepository', () => {
   let commentRepository: CommentRepository;
@@ -14,7 +14,7 @@ describe('CommentRepository', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [AppConfigModule],
       providers: [PrismaService, CommentRepository],
     }).compile();
 
