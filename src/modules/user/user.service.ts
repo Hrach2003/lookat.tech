@@ -24,7 +24,10 @@ export class UserService {
     private readonly fileUploadService: FileUploadService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create<T>(
+    createUserDto: CreateUserDto,
+    userSelect = UserView.default<T>(),
+  ) {
     const existsEmail = await this.userRepository.findByEmail(
       createUserDto.email,
     );
@@ -34,47 +37,47 @@ export class UserService {
     const hashedPassword = await Hash.generate(createUserDto.password);
     createUserDto.password = hashedPassword;
 
-    return await this.userRepository.createUser(createUserDto);
+    return await this.userRepository.createUser<T>(createUserDto, userSelect);
   }
 
-  async addFriends(userId: number, friendIds: number[]) {
-    return await this.userRepository.addFriends(userId, friendIds);
+  async addFriends<T>(userId: number, friendIds: number[]) {
+    return await this.userRepository.addFriends<T>(userId, friendIds);
   }
 
-  async findAll() {
-    return await this.userRepository.findMany({});
+  async findAll<T>() {
+    return await this.userRepository.findMany<T>({});
   }
 
-  async findOne(id: number) {
-    return await this.userRepository.findOne({ id });
+  async findOne<T>(id: number) {
+    return await this.userRepository.findOne<T>({ id });
   }
 
   async findByEmail<T>(email: string, userSelect = UserView.default<T>()) {
-    return await this.userRepository.findByEmail(email, userSelect);
+    return await this.userRepository.findByEmail<T>(email, userSelect);
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    return await this.userRepository.update(id, updateUserDto);
+  async update<T>(id: number, updateUserDto: UpdateUserDto) {
+    return await this.userRepository.update<T>(id, updateUserDto);
   }
 
-  async updatePassword(user: User, changePasswordDto: ChangePasswordDto) {
+  async updatePassword<T>(user: User, changePasswordDto: ChangePasswordDto) {
     await this.authService.validateUser({
       email: user.email,
       password: changePasswordDto.currentPassword,
     });
 
-    return await this.userRepository.update(user.id, {
+    return await this.userRepository.update<T>(user.id, {
       password: changePasswordDto.newPassword,
     });
   }
 
-  async remove(id: number) {
-    const deleteResponse = await this.userRepository.delete(id);
+  async remove<T>(id: number) {
+    const deleteResponse = await this.userRepository.delete<T>(id);
     if (!deleteResponse) throw new NotFoundException('User not found');
   }
 
-  async uploadAvatar(user: User, file: Express.Multer.File) {
+  async uploadAvatar<T>(user: User, file: Express.Multer.File) {
     const imageUrl = await this.fileUploadService.uploadFile(file);
-    return await this.userRepository.update(user.id, { avatar: imageUrl });
+    return await this.userRepository.update<T>(user.id, { avatar: imageUrl });
   }
 }

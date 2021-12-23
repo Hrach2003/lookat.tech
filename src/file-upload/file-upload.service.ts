@@ -11,7 +11,6 @@ import { Generator } from '../utils/generator.util';
 @Injectable()
 export class FileUploadService {
   private readonly s3: AWS.S3;
-
   private readonly logger = new Logger(FileUploadService.name);
 
   constructor(private readonly configService: ConfigService) {

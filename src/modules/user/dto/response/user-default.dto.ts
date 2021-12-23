@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 
 type BaseView = typeof UserView.fields;
 
-export abstract class UserView {
+export class UserView {
   static readonly fields = {
     id: true,
     createdAt: true,
