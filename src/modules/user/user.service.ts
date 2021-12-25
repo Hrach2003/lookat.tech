@@ -1,3 +1,4 @@
+import { TrueFields } from './../../common/view/view.factory';
 import {
   ConflictException,
   forwardRef,
@@ -5,14 +6,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { FileUploadService } from '../../file-upload/file-upload.service';
 import { Hash } from '../../utils/hash.util';
 import { AuthService } from '../auth/auth.service';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
-import { userDefaultView } from './dto/response/user.views';
 import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
@@ -24,9 +24,9 @@ export class UserService {
     private readonly fileUploadService: FileUploadService,
   ) {}
 
-  async create<T>(
+  async create<T extends TrueFields<Prisma.UserSelect>>(
     createUserDto: CreateUserDto,
-    userSelect: T = userDefaultView(),
+    userSelect?: T,
   ) {
     const existsEmail = await this.userRepository.findByEmail(
       createUserDto.email,
@@ -37,47 +37,49 @@ export class UserService {
     const hashedPassword = await Hash.generate(createUserDto.password);
     createUserDto.password = hashedPassword;
 
-    return await this.userRepository.createUser<T>(createUserDto, userSelect);
+    return await this.userRepository.createUser(createUserDto, userSelect);
   }
 
-  async addFriends<T>(userId: number, friendIds: number[]) {
-    return await this.userRepository.addFriends<T>(userId, friendIds);
+  async addFriends(userId: number, friendIds: number[]) {
+    return await this.userRepository.addFriends(userId, friendIds);
   }
 
-  async findAll<T>() {
-    return await this.userRepository.findMany<T>({});
+  async findAll() {
+    return await this.userRepository.findMany({});
   }
 
-  async findOne<T>(id: number) {
-    return await this.userRepository.findOne<T>({ id });
+  async findOne(id: number) {
+    return await this.userRepository.findOne({ id });
   }
 
-  async findByEmail<T>(email: string, userSelect: T = userDefaultView()) {
-    return await this.userRepository.findByEmail<T>(email, userSelect);
+  async findByEmail(email: string) {
+    return await this.userRepository.findByEmail(email);
   }
 
-  async update<T>(id: number, updateUserDto: UpdateUserDto) {
-    return await this.userRepository.update<T>(id, updateUserDto);
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    return await this.userRepository.update(id, updateUserDto);
   }
 
-  async updatePassword<T>(user: User, changePasswordDto: ChangePasswordDto) {
+  async updatePassword(user: User, changePasswordDto: ChangePasswordDto) {
     await this.authService.validateUser({
       email: user.email,
       password: changePasswordDto.currentPassword,
     });
 
-    return await this.userRepository.update<T>(user.id, {
+    return await this.userRepository.update(user.id, {
       password: changePasswordDto.newPassword,
     });
   }
 
-  async remove<T>(id: number) {
-    const deleteResponse = await this.userRepository.delete<T>(id);
+  async remove(id: number) {
+    const deleteResponse = await this.userRepository.delete(id);
     if (!deleteResponse) throw new NotFoundException('User not found');
   }
 
-  async uploadAvatar<T>(user: User, file: Express.Multer.File) {
+  async uploadAvatar(user: User, file: Express.Multer.File) {
     const imageUrl = await this.fileUploadService.uploadFile(file);
-    return await this.userRepository.update<T>(user.id, { avatar: imageUrl });
+    return await this.userRepository.update(user.id, {
+      avatar: imageUrl,
+    });
   }
 }

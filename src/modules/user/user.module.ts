@@ -10,6 +10,6 @@ import { UserService } from './user.service';
   imports: [FileUploadModule, forwardRef(() => AuthModule)],
   controllers: [UserController],
   providers: [UserService, UserRepository, PrismaService],
-  exports: [UserService],
+  exports: [UserService, UserRepository],
 })
 export class UserModule {}

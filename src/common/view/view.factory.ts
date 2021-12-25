@@ -1,4 +1,4 @@
-type TrueFields<T> = { [P in keyof T]: true };
+export type TrueFields<T> = { [P in keyof T]: true };
 
 export class ViewFactory<Select> {
   construct<DefaultFields extends TrueFields<Select>>(fields: DefaultFields) {

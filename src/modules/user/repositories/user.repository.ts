@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { TrueFields } from '../../../common/view/view.factory';
 import { PrismaService } from '../../../database/database.service';
 import { CreateUserDto } from '../dto/request/create-user.dto';
 import { userDefaultView } from '../dto/response/user.views';
@@ -8,72 +9,78 @@ import { userDefaultView } from '../dto/response/user.views';
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async delete<T>(id: number, userSelect: T = userDefaultView()) {
+  async delete<T extends TrueFields<Prisma.UserSelect>>(
+    id: number,
+    userSelect?: T,
+  ) {
     return await this.prismaService.user.delete({
       where: { id },
-      select: userSelect,
+      select: userSelect || userDefaultView(),
     });
   }
 
-  async update<T>(
+  async update<T extends TrueFields<Prisma.UserSelect>>(
     id: number,
     updateUserDto: Prisma.UserUpdateInput,
-    userSelect: T = userDefaultView(),
+    userSelect?: T,
   ) {
     return await this.prismaService.user.update({
       where: { id },
       data: updateUserDto,
-      select: userSelect,
+      select: userSelect || userDefaultView(),
     });
   }
 
-  async findMany<T>(
+  async findMany<T extends TrueFields<Prisma.UserSelect>>(
     userFindInput: Prisma.UserWhereInput,
-    userSelect: T = userDefaultView(),
+    userSelect?: T,
   ) {
     return await this.prismaService.user.findMany({
       where: userFindInput,
-      select: userSelect,
+      select: userSelect || userDefaultView(),
     });
   }
 
-  async findOne<T>(
+  async findOne<T extends TrueFields<Prisma.UserSelect>>(
     userFindUniqueInput: Prisma.UserWhereUniqueInput,
-    userSelect: T = userDefaultView(),
+    userSelect?: T,
   ) {
     return await this.prismaService.user.findFirst({
       where: userFindUniqueInput,
-      select: userSelect,
+      select: userSelect || userDefaultView(),
     });
   }
 
-  async findByEmail<T>(email: string, userSelect: T = userDefaultView()) {
+  async findByEmail<T extends TrueFields<Prisma.UserSelect>>(
+    email: string,
+    userSelect?: T,
+  ) {
     return await this.prismaService.user.findFirst({
       where: { email },
-      select: userSelect,
+      select: userSelect || userDefaultView(),
     });
   }
 
-  async createUser<T>(
+  async createUser<T extends TrueFields<Prisma.UserSelect>>(
     createUserDto: CreateUserDto,
-    userSelect: T = userDefaultView(),
+    userSelect?: T,
   ) {
     const user = await this.prismaService.user.create({
       data: createUserDto,
-      select: userSelect,
+      select: userSelect || userDefaultView(),
     });
 
     return user;
   }
 
-  async addFriends<T>(
+  async addFriends<T extends TrueFields<Prisma.UserSelect>>(
     userId: number,
     friendIds: number[],
-    userSelect: T = userDefaultView(),
+    userSelect?: T,
   ) {
     return await this.prismaService.user.update({
       where: { id: userId },
-      select: userSelect,
+      select: userSelect || userDefaultView(),
       data: {
         friends: {
           connect: friendIds.map((id) => ({ id })),

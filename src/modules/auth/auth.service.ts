@@ -1,13 +1,8 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Hash } from '../../utils/hash.util';
-import { userDefaultView } from '../user/dto/response/user.views';
-import { UserService } from '../user/user.service';
+import { userWithPassword } from '../user/dto/response/user.views';
+import { UserRepository } from '../user/repositories/user.repository';
 import { LoginDto } from './dto/request/login.dto';
 import { TokenDto } from './dto/response/token.dto';
 import { JwtPayload } from './types/jwt.type';
@@ -15,17 +10,14 @@ import { JwtPayload } from './types/jwt.type';
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(forwardRef(() => UserService))
-    private readonly userService: UserService,
+    private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
   ) {}
 
   async validateUser(loginDto: LoginDto) {
-    const user = await this.userService.findByEmail(
+    const user = await this.userRepository.findByEmail(
       loginDto.email,
-      userDefaultView({
-        password: true,
-      }),
+      userWithPassword(),
     );
 
     const isPasswordsMatch = await Hash.compare(

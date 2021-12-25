@@ -19,3 +19,8 @@ export const userFullView = userView.construct({
   friends: true,
   comments: true,
 });
+
+export const userWithPassword = userView.construct({
+  ...userDefaultView(),
+  password: true,
+});

@@ -18,8 +18,8 @@
     "prisma:migrate": "dotenv -e .env.$NODE_ENV prisma migrate",
     "prisma:studio": "dotenv -e .env.$NODE_ENV prisma studio",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "dotenv -e .env.test | jest",
-    "test:watch": "dotenv -e .env.test | jest --watch",
+    "test": "dotenv -e .env.test -- jest",
+    "test:watch": "dotenv -e .env.test -- jest --watch",
     "test:cov": "dotenv -e .env.test | jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
