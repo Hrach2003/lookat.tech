@@ -14,7 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { CurrentUser } from '../../decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { PaginationFactory } from './../../common/pagination.factory';
+import { PaginationFactory } from './../../common/pagination/pagination.factory';
 import { CreatePostDto } from './dto/request/create-post.dto';
 import { UpdatePostDto } from './dto/request/update-post.dto';
 import { PostPaginationRequest } from './dto/response/pagination-post.dto';

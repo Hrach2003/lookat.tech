@@ -12,7 +12,7 @@ import { AuthService } from '../auth/auth.service';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
-import { UserView } from './dto/response/user-default.dto';
+import { userDefaultView } from './dto/response/user.views';
 import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class UserService {
 
   async create<T>(
     createUserDto: CreateUserDto,
-    userSelect = UserView.default<T>(),
+    userSelect: T = userDefaultView(),
   ) {
     const existsEmail = await this.userRepository.findByEmail(
       createUserDto.email,
@@ -52,7 +52,7 @@ export class UserService {
     return await this.userRepository.findOne<T>({ id });
   }
 
-  async findByEmail<T>(email: string, userSelect = UserView.default<T>()) {
+  async findByEmail<T>(email: string, userSelect: T = userDefaultView()) {
     return await this.userRepository.findByEmail<T>(email, userSelect);
   }
 

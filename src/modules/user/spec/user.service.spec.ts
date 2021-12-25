@@ -6,7 +6,7 @@ import { PrismaService } from '../../../database/database.service';
 import { FileUploadService } from '../../../file-upload/file-upload.service';
 import { AuthModule } from '../../auth/auth.module';
 import { AuthService } from '../../auth/auth.service';
-import { UserView } from '../dto/response/user-default.dto';
+import { userDefaultView } from '../dto/response/user.views';
 import { CreateUserDto } from './../dto/request/create-user.dto';
 import { UserRepository } from './../repositories/user.repository';
 import { UserService } from './../user.service';
@@ -46,7 +46,7 @@ describe('UserService', () => {
     it('should throw conflict email exists', async () => {
       jest
         .spyOn(userRepository, 'findByEmail')
-        .mockImplementationOnce(() => true);
+        .mockImplementationOnce(async () => true);
 
       async function create() {
         await userService.create(createUserDto);
@@ -58,16 +58,16 @@ describe('UserService', () => {
     it('should hash password and return created user', async () => {
       jest
         .spyOn(userRepository, 'findByEmail')
-        .mockImplementationOnce(() => false);
+        .mockImplementationOnce(async () => false);
 
       jest
         .spyOn(userRepository, 'createUser')
-        .mockImplementationOnce((user) => user);
+        .mockImplementationOnce(async (user) => user);
 
       const notHashedPassword = createUserDto.password;
       const user = await userService.create(
         createUserDto,
-        UserView.default({
+        userDefaultView({
           password: true,
         }),
       );

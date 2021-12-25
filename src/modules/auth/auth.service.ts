@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Hash } from '../../utils/hash.util';
-import { UserView } from '../user/dto/response/user-default.dto';
+import { userDefaultView } from '../user/dto/response/user.views';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/request/login.dto';
 import { TokenDto } from './dto/response/token.dto';
@@ -23,7 +23,7 @@ export class AuthService {
   async validateUser(loginDto: LoginDto) {
     const user = await this.userService.findByEmail(
       loginDto.email,
-      UserView.default({
+      userDefaultView({
         password: true,
       }),
     );
