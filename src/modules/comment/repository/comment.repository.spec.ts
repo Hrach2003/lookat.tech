@@ -67,9 +67,7 @@ describe('CommentRepository', () => {
       );
 
       expect(comments.length).toBeGreaterThan(0);
-      expect(comments[comments.length - 1].message).toEqual(
-        createCommentDto.message,
-      );
+      expect(comments.at(-1).message).toEqual(createCommentDto.message);
     });
 
     it('should throw error: Post with id does not exist', async () => {

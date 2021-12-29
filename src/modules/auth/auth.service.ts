@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserRoleEnum } from '@prisma/client';
 import { Hash } from '../../utils/hash.util';
 import { userWithPassword } from '../user/dto/response/user.views';
 import { UserRepository } from '../user/repositories/user.repository';
@@ -17,7 +18,9 @@ export class AuthService {
   async validateUser(loginDto: LoginDto) {
     const user = await this.userRepository.findByEmail(
       loginDto.email,
-      userWithPassword(),
+      userWithPassword({
+        isTwoFactorEnabled: true,
+      }),
     );
 
     const isPasswordsMatch = await Hash.compare(
@@ -31,14 +34,19 @@ export class AuthService {
     return user;
   }
 
-  async createToken(user: { email: string; id: number }): Promise<TokenDto> {
-    const payload: JwtPayload = {
-      email: user.email,
-      id: user.id,
+  async createToken(payload: {
+    role: UserRoleEnum;
+    userId: number;
+    isTwoFactorAuthEnabled: boolean;
+  }): Promise<TokenDto> {
+    const tokenPayload: JwtPayload = {
+      role: payload.role,
+      id: payload.userId,
+      isTwoFactorAuthEnabled: payload.isTwoFactorAuthEnabled || false,
     };
 
     return new TokenDto({
-      accessToken: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(tokenPayload),
     });
   }
 }

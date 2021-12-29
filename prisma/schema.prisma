@@ -25,6 +25,9 @@ model User {
   comments Comment[]
   replies  Reply[]
 
+  twoFactorAuthSecret String?
+  isTwoFactorEnabled  Boolean @default(false)
+
   @@map("user")
 }
 

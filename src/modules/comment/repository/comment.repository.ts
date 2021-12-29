@@ -1,3 +1,4 @@
+import { TrueFields } from './../../../common/view/view.factory';
 import { Injectable } from '@nestjs/common';
 import { Prisma, Reply, User } from '@prisma/client';
 import { PrismaService } from '../../../database/database.service';
@@ -10,10 +11,10 @@ import { UpdateCommentDto } from './../dto/request/update-comment.dto';
 export class CommentRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createPostComment<T>(
+  async createPostComment<T extends TrueFields<Prisma.CommentSelect>>(
     user: User,
     createCommentDto: CreateCommentDto,
-    commentSelect: T = commentDefaultView(),
+    commentSelect?: T,
   ) {
     return await this.prismaService.post
       .update({
@@ -31,7 +32,7 @@ export class CommentRepository {
           },
         },
       })
-      .comments({ select: commentSelect });
+      .comments({ select: commentSelect || commentDefaultView() });
   }
 
   async createCommentReply(
@@ -57,25 +58,25 @@ export class CommentRepository {
       .replies();
   }
 
-  async findUnique<T>(
+  async findUnique<T extends TrueFields<Prisma.CommentSelect>>(
     uniqueInput: Prisma.CommentWhereUniqueInput,
-    commentSelect: T = commentDefaultView(),
+    commentSelect?: T,
   ) {
     return await this.prismaService.comment.findFirst({
       where: uniqueInput,
-      select: commentSelect,
+      select: commentSelect || commentDefaultView(),
     });
   }
 
-  async edit<T>(
+  async edit<T extends TrueFields<Prisma.CommentSelect>>(
     commentId: number,
     updateCommentDto: UpdateCommentDto,
-    commentSelect: T = commentDefaultView(),
+    commentSelect?: T,
   ) {
     return await this.prismaService.comment.update({
       where: { id: commentId },
       data: updateCommentDto,
-      select: commentSelect,
+      select: commentSelect || commentDefaultView(),
     });
   }
 }

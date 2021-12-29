@@ -48,8 +48,11 @@ export class UserService {
     return await this.userRepository.findMany({});
   }
 
-  async findOne(id: number) {
-    return await this.userRepository.findOne({ id });
+  async findOne<T extends TrueFields<Prisma.UserSelect>>(
+    id: number,
+    userSelect?: T,
+  ) {
+    return await this.userRepository.findOne({ id }, userSelect);
   }
 
   async findByEmail(email: string) {
@@ -80,6 +83,18 @@ export class UserService {
     const imageUrl = await this.fileUploadService.uploadFile(file);
     return await this.userRepository.update(user.id, {
       avatar: imageUrl,
+    });
+  }
+
+  async setTwoFactorAuthSecret(id: number, secret: string) {
+    return await this.userRepository.update(id, {
+      twoFactorAuthSecret: secret,
+    });
+  }
+
+  async toggleTwoFactorAuth(id: number, payload: { enable: boolean }) {
+    return await this.userRepository.update(id, {
+      isTwoFactorEnabled: payload.enable,
     });
   }
 }

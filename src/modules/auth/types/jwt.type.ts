@@ -1,4 +1,7 @@
+import { UserRoleEnum } from '@prisma/client';
+
 export type JwtPayload = {
-  email: string;
   id: number;
+  role: UserRoleEnum;
+  isTwoFactorAuthEnabled: boolean;
 };

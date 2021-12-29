@@ -13,7 +13,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { CurrentUser } from '../../decorators/current-user.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { JwtTwoFactorGuard } from '../auth/guards/jwt-two-factor.guard';
 import { PaginationFactory } from './../../common/pagination/pagination.factory';
 import { CreatePostDto } from './dto/request/create-post.dto';
 import { UpdatePostDto } from './dto/request/update-post.dto';
@@ -26,7 +26,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('create')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async create(
     @CurrentUser() user: User,
     @Body() createPostDto: CreatePostDto,
@@ -50,7 +50,7 @@ export class PostController {
   }
 
   @Get('my')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async findCurrentUserPosts(@CurrentUser() user: User) {
     return await this.postService.findByUser(user);
   }
@@ -61,7 +61,7 @@ export class PostController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async update(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) id: number,

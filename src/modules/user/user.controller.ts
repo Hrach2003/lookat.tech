@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Logger,
   Param,
@@ -13,11 +12,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { User, UserRoleEnum } from '@prisma/client';
 import { CurrentUser } from '../../decorators/current-user.decorator';
 import { Roles } from '../../decorators/roles.decorator';
 import { FileUploadDto } from '../../file-upload/dto/file-upload.dto';
+import { JwtTwoFactorGuard } from '../auth/guards/jwt-two-factor.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { AddFriendsDto } from './dto/request/add-friends.dto';
@@ -51,7 +51,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async update(
     @CurrentUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
@@ -61,6 +61,7 @@ export class UserController {
 
   @Post('update-password')
   @ApiBody({ type: ChangePasswordDto })
+  @UseGuards(JwtTwoFactorGuard)
   async updatePassword(
     @CurrentUser() user: User,
     @Body() changePasswordDto: ChangePasswordDto,
@@ -68,15 +69,8 @@ export class UserController {
     return await this.userService.updatePassword(user, changePasswordDto);
   }
 
-  @Delete(':id')
-  @ApiOkResponse({ type: Boolean })
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    await this.userService.remove(id);
-    return true;
-  }
-
   @Post('upload-avatar')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtTwoFactorGuard)
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -96,7 +90,7 @@ export class UserController {
     type: AddFriendsDto,
   })
   @Post('add-friends')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async addFriends(
     @Body() addFriendsDto: AddFriendsDto,
     @CurrentUser() user: User,

@@ -1,29 +1,39 @@
-import { TokenDto } from './../dto/response/token.dto';
-import { JwtPayload } from './../types/jwt.type';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
+import { User, UserRoleEnum } from '@prisma/client';
 import { Hash } from '../../../utils/hash.util';
 import { UserService } from '../../user/user.service';
 import { AuthService } from '../auth.service';
+import { TokenDto } from './../dto/response/token.dto';
 
 describe('AuthService', () => {
   let authService: AuthService;
   let userService: UserService;
   let jwtService: JwtService;
+  let user;
+
+  beforeEach(() => {
+    user = {
+      email: user.email,
+      password: 'wrong_hash',
+      id: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      name: 'hr',
+      avatar: null,
+      role: UserRoleEnum.USER,
+    };
+  });
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [AuthService],
     })
-      .useMocker((token) => {
-        if (token === JwtService) {
-          return { signAsync: () => ({}) };
-        }
-        if (token === UserService) {
-          return { findByEmail: () => ({}) };
-        }
-      })
+      .overrideProvider(JwtService)
+      .useValue({ signAsync: () => ({}) })
+      .overrideProvider(UserService)
+      .useValue({ findByEmail: () => ({}) })
       .compile();
 
     authService = moduleRef.get(AuthService);
@@ -32,13 +42,13 @@ describe('AuthService', () => {
   });
 
   describe('User validation', () => {
-    const user = {
-      email: 'hr@gmail.com',
-      password: '12345678',
-    };
+    // const user = {
+    //   email: 'hr@gmail.com',
+    //   password: '12345678',
+    // };
 
     it('should failed with non existing email', async () => {
-      jest.spyOn(userService, 'findByEmail').mockImplementation(() => ({}));
+      jest.spyOn(userService, 'findByEmail').mockImplementation(() => user);
 
       async function validate() {
         await authService.validateUser(user);
@@ -51,11 +61,17 @@ describe('AuthService', () => {
       const userWithWrongHashedPassword = {
         email: user.email,
         password: 'wrong_hash',
+        id: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        name: 'hr',
+        avatar: null,
+        role: UserRoleEnum.USER,
       };
 
       jest
         .spyOn(userService, 'findByEmail')
-        .mockImplementation(() => userWithWrongHashedPassword);
+        .mockImplementation(async () => userWithWrongHashedPassword);
 
       async function validate() {
         await authService.validateUser(user);
@@ -68,11 +84,11 @@ describe('AuthService', () => {
       const userWithHashedPassword = {
         email: user.email,
         password: await Hash.generate(user.password),
-      };
+      } as User;
 
       jest
         .spyOn(userService, 'findByEmail')
-        .mockImplementation(() => userWithHashedPassword);
+        .mockImplementation(async () => userWithHashedPassword);
 
       const authenticatedUser = await authService.validateUser(user);
 
@@ -84,9 +100,10 @@ describe('AuthService', () => {
   });
 
   describe('Create token', () => {
-    const payload: JwtPayload = {
-      email: 'hr@gmail.com',
-      id: 1,
+    const payload = {
+      role: UserRoleEnum.ADMIN,
+      userId: 1,
+      isTwoFactorAuthEnabled: false,
     };
 
     it('should return TokenDto', async () => {

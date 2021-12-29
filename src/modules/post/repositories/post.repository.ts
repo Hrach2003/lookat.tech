@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { paginationQuery } from '../../../common/pagination/pagination.query';
+import { TrueFields } from '../../../common/view/view.factory';
 import { PrismaService } from '../../../database/database.service';
 import { CreatePostDto } from '../dto/request/create-post.dto';
 import { UpdatePostDto } from '../dto/request/update-post.dto';
@@ -11,13 +12,13 @@ import { postDefaultView } from '../dto/response/post.views';
 export class PostRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createPost<T>(
+  async createPost<T extends TrueFields<Prisma.PostSelect>>(
     user: User,
     createPostDto: CreatePostDto,
-    postSelect: T = postDefaultView(),
+    postSelect?: T,
   ) {
     return await this.prismaService.post.create({
-      select: postSelect,
+      select: postSelect || postDefaultView(),
       data: {
         ...createPostDto,
         author: {
@@ -29,12 +30,12 @@ export class PostRepository {
     });
   }
 
-  async findAll<T>(
+  async findAll<T extends TrueFields<Prisma.PostSelect>>(
     postInput: Prisma.PostWhereInput,
-    postSelect: T = postDefaultView(),
+    postSelect?: T,
   ) {
     return await this.prismaService.post.findMany({
-      select: postSelect,
+      select: postSelect || postDefaultView(),
       where: postInput,
     });
   }

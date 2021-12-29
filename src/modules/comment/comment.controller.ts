@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { CurrentUser } from '../../decorators/current-user.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { JwtTwoFactorGuard } from '../auth/guards/jwt-two-factor.guard';
 import { CommentService } from './comment.service';
 import { CreateReplyDto } from './dto/create-reply.dto';
 import { CreateCommentDto } from './dto/request/create-comment.dto';
@@ -19,7 +19,7 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post('reply')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async reply(
     @Body() createReplyDto: CreateReplyDto,
     @CurrentUser() user: User,
@@ -28,8 +28,7 @@ export class CommentController {
   }
 
   @Post('create')
-  @UseGuards(JwtAuthGuard)
-  // @ApiOkResponse({ type: [CommentDefaultView] })
+  @UseGuards(JwtTwoFactorGuard)
   async comment(
     @Body() createCommentDto: CreateCommentDto,
     @CurrentUser() user: User,
@@ -38,7 +37,6 @@ export class CommentController {
   }
 
   @Get(':id')
-  // @ApiOkResponse({ type: CommentDefaultView })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.commentService.findById(id);
   }

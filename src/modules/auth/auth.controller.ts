@@ -13,7 +13,7 @@ import { CurrentUser } from '../../decorators/current-user.decorator';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/request/login.dto';
 import { TokenDto } from './dto/response/token.dto';
-import { JwtAuthGuard } from './guards/jwt.guard';
+import { JwtTwoFactorGuard } from './guards/jwt-two-factor.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -28,11 +28,16 @@ export class AuthController {
   })
   async login(@Body() loginDto: LoginDto): Promise<TokenDto> {
     const user = await this.authService.validateUser(loginDto);
-    return await this.authService.createToken(user);
+
+    return await this.authService.createToken({
+      role: user.role,
+      userId: user.id,
+      isTwoFactorAuthEnabled: user.isTwoFactorEnabled,
+    });
   }
 
   @Get('me')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtTwoFactorGuard)
   getCurrentUser(@CurrentUser() me: User) {
     return me;
   }

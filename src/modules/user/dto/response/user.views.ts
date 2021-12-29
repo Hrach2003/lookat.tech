@@ -1,5 +1,5 @@
-import { ViewFactory } from './../../../../common/view/view.factory';
 import { Prisma } from '@prisma/client';
+import { ViewFactory } from './../../../../common/view/view.factory';
 
 const userView = new ViewFactory<Prisma.UserSelect>();
 
@@ -23,4 +23,9 @@ export const userFullView = userView.construct({
 export const userWithPassword = userView.construct({
   ...userDefaultView(),
   password: true,
+});
+
+export const userWithTwoFactorSecret = userView.construct({
+  ...userDefaultView(),
+  twoFactorAuthSecret: true,
 });
