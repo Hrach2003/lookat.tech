@@ -17,7 +17,7 @@ export class FileUploadService {
     const options: AWS.S3.Types.ClientConfiguration = {
       region: this.configService.get('AWS_BUCKET_REGION'),
       accessKeyId: this.configService.get('AWS_KEY'),
-      secretAccessKey: this.configService.get('AWS_SECRET_KEY'),
+      secretAccessKey: this.configService.get('AWS_KEY_SECRET'),
     };
 
     this.s3 = new AWS.S3(options);

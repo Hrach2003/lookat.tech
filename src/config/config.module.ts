@@ -19,7 +19,7 @@ import { loadConfig } from './config.loader';
         AWS_BUCKET_REGION: Joi.string().required(),
         AWS_BUCKET_ARN: Joi.string().required(),
         AWS_KEY: Joi.string().required(),
-        AWS_SECRET_KEY: Joi.string().required(),
+        AWS_KEY_SECRET: Joi.string().required(),
       }),
     }),
   ],

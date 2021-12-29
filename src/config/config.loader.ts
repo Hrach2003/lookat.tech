@@ -10,6 +10,6 @@ export const loadConfig = () => ({
   AWS_BUCKET_REGION: process.env.AWS_BUCKET_REGION,
   AWS_BUCKET_ARN: process.env.AWS_BUCKET_ARN,
   AWS_KEY: process.env.AWS_KEY,
-  AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
+  AWS_KEY_SECRET: process.env.AWS_KEY_SECRET,
   AUTH_APP_NAME: process.env.AUTH_APP_NAME,
 });
